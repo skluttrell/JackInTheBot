@@ -22,7 +22,10 @@ async def heyjack(ctx, message: str):
 	if message.lower() == 'draw':
 		if where in DECKS:
 			card = DECKS[where].draw_from_deck()
-			await ctx.send(f'{ctx.author} has drawn:\n\n{card["name"]}')
+			if card:
+				await ctx.send(f'{ctx.author} has drawn:\n\n{card["name"]}')
+			else:
+				await ctx.send(f'You have drained the deck dry. As usual, {ctx.author} is not paying attention.\n\nMaybe deal a new deck?')
 		else:
 			DECKS[where] = Deck()
 			await ctx.send(f'Just like a typical human, {ctx.author} has asked me to do the impossible. There is no deck assigned to this channel.\n\nAllow me to do what you should have already done.\n\nA new deck is available here.\n\nNow you can ask to draw a card.')

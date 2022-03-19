@@ -75,7 +75,7 @@ class Deck:
 		client = RandomOrgClient(RDO_KEY)
 		try:
 			# Generate a list of random card numbers from random.org
-			self._cards = client.generate_integers(52, 0, max, False)
+			self._cards = client.generate_integers(max+1, 0, max, False)
 		except Exception as e:
 			logging.exception(e)
 			# Fallback to Python's pseudo random generrator
@@ -149,4 +149,4 @@ if __name__ == '__main__':
 	test = Deck()
 	for _ in range(0,52):
 		card = test.draw_from_deck()
-		print(card)
+		print(card['name'])
