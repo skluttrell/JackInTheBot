@@ -1,12 +1,11 @@
-from rdoclient import RandomOrgClient
+from conf import logger
 from dotenv import load_dotenv
-import random
+from rdoclient import RandomOrgClient
 import os
-import logging
+import random
 
 load_dotenv()
 RDO_KEY = os.getenv('RDO_KEY')
-logging.basicConfig(format='%(asctime)s %(message)s', filename='fallback.log', level=logging.DEBUG)
 
 class Deck:
 	def __init__(self):
@@ -76,8 +75,8 @@ class Deck:
 		try:
 			# Generate a list of random card numbers from random.org
 			self._cards = client.generate_integers(max+1, 0, max, False)
-		except Exception as e:
-			logging.exception(e)
+		except Exception:
+			logger.exception('Defaulting to local pseudo random generator.')
 			# Fallback to Python's pseudo random generrator
 			self._cards = [ i for i in range(0,52) ]
 			random.shuffle(self._cards)
