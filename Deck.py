@@ -65,7 +65,6 @@ class Deck:
 		]
 		self._cards: list = []
 		self._discard_pile: list = []
-		self._reveal21 = False
 		self.deal()
 
 	def deal(self):
@@ -119,20 +118,6 @@ class Deck:
 			return self._discard_pile[len(self._discard_pile)-1]
 		return False
 
-	@property
-	def reveal21(self) -> bool:
-		"""
-			Returns the state of the boolean
-			that allows a user to view the revealed
-			card in a game of 21
-		"""
-		return self._reveal21
-
-	@reveal21.setter
-	def reveal21(self, value: bool):
-		""" Sets the reveal21 bool """
-		self._reveal21 = value
-
 # Dec:
 # Has a cards pile and a discard pile
 # Shuffle: puts all the cards into the deck and shuffles them
@@ -143,9 +128,3 @@ class Deck:
 # Hand:
 # Belongs to specific user
 # users can: draw from deck, place card on discard pile, see their hand (DM), see the number of cards in their hand (DM), ?value of their hand?, see another user's exposed card for 21,  pass cards to other players
-
-if __name__ == '__main__':
-	test = Deck()
-	for _ in range(0,52):
-		card = test.draw_from_deck()
-		print(card['name'])
