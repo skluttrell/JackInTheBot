@@ -1,4 +1,12 @@
-from randorg import get_int
+from rdoclient import RandomOrgClient
+from dotenv import load_dotenv
+import random
+import os
+import logging
+
+load_dotenv()
+RDO_KEY = os.getenv('RDO_KEY')
+logging.basicConfig(format='%(asctime)s %(message)s', filename='fallback.log', level=logging.DEBUG)
 
 class Deck:
 	def __init__(self):
@@ -16,6 +24,7 @@ class Deck:
 			{ 'name': 'Jack of Spades', 'value': (10) },
 			{ 'name': 'Queen of Spades', 'value': (10) },
 			{ 'name': 'King of Spades', 'value': (10) },
+			{ 'name': 'Ace of Clubs', 'value': (1,11) },
 			{ 'name': 'Two of Clubs', 'value': (2) },
 			{ 'name': 'Three of Clubs', 'value': (3) },
 			{ 'name': 'Four of Clubs', 'value': (4) },
@@ -28,6 +37,7 @@ class Deck:
 			{ 'name': 'Jack of Clubs', 'value': (10) },
 			{ 'name': 'Queen of Clubs', 'value': (10) },
 			{ 'name': 'King of Clubs', 'value': (10) },
+			{ 'name': 'Ace of Hearts', 'value': (1,11) },
 			{ 'name': 'Two of Hearts', 'value': (2) },
 			{ 'name': 'Three of Hearts', 'value': (3) },
 			{ 'name': 'Four of Hearts', 'value': (4) },
@@ -40,6 +50,7 @@ class Deck:
 			{ 'name': 'Jack of Hearts', 'value': (10) },
 			{ 'name': 'Queen of Hearts', 'value': (10) },
 			{ 'name': 'King of Hearts', 'value': (10) },
+			{ 'name': 'Ace of Diamonds', 'value': (1,11) },
 			{ 'name': 'Two of Diamonds', 'value': (2) },
 			{ 'name': 'Three of Diamonds', 'value': (3) },
 			{ 'name': 'Four of Diamonds', 'value': (4) },
@@ -53,21 +64,29 @@ class Deck:
 			{ 'name': 'Queen of Diamonds', 'value': (10) },
 			{ 'name': 'King of Diamonds', 'value': (10) },
 		]
-		self._cards: list = self.deal()
-		self._discard_pile = []
+		self._cards: list = []
+		self._discard_pile: list = []
 		self._reveal21 = False
+		self.deal()
 
-	def deal(self) -> list:
+	def deal(self):
 		""" Creates a new deck """
-		self._cards = self._CARDTYPES.copy()
+		max = len(self._CARDTYPES) - 1
+		client = RandomOrgClient(RDO_KEY)
+		try:
+			# Generate a list of random card numbers from random.org
+			self._cards = client.generate_integers(52, 0, max, False)
+		except Exception as e:
+			logging.exception(e)
+			# Fallback to Python's pseudo random generrator
+			self._cards = [ i for i in range(0,52) ]
+			random.shuffle(self._cards)
 
 	def draw_from_deck(self) -> dict:
 		""" Draws a new card """
 		if self._cards:
-			max = len(self._cards) - 1
-			idx = get_int(0, max)
-			card = self._cards[idx]
-			self._cards.pop(idx)
+			card = self._CARDTYPES[self._cards[0]]
+			self._cards.pop(0)
 			return card
 		return False
 
@@ -75,7 +94,7 @@ class Deck:
 		""" Pull the top card from the discard pile """
 		if self._discard_pile:
 			idx = len(self._discard_pile) - 1
-			card = self._discard_pile[idx]
+			card = self._CARDTYPES[self._discard_pile[idx]]
 			self._discard_pile.pop(idx)
 			return card
 		return False
@@ -125,3 +144,9 @@ class Deck:
 # Hand:
 # Belongs to specific user
 # users can: draw from deck, place card on discard pile, see their hand (DM), see the number of cards in their hand (DM), ?value of their hand?, see another user's exposed card for 21,  pass cards to other players
+
+if __name__ == '__main__':
+	test = Deck()
+	for _ in range(0,52):
+		card = test.draw_from_deck()
+		print(card)
