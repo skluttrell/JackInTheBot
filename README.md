@@ -4,9 +4,9 @@ A Discord bot that deals cards
 ## Simple Interface
 The base command for this Discord bot is /heyjack with 3 commands.  
   
-### deal
-/heyjack deal  
-Issues a deck to the channel in which the command is made.  
+### shuffle
+/heyjack shuffle  
+Issues a shuffled deck to the channel in which the command is made.  
   
 ### draw
 /heyjack draw  
