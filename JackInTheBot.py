@@ -2,6 +2,7 @@ from discord.ext import commands
 import os
 from dotenv import load_dotenv
 from Deck import Deck
+from conf import logger
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
@@ -16,7 +17,7 @@ async def on_ready():
 @BOT.command(name='heyjack', help='issues a command to JackInTheBot. deal: Creates a new deck or shuffles one that already exists; draw: draws a card from the deck; kill: removes the deck from the channel.')
 async def heyjack(ctx, message: str):
 	where = (ctx.guild, ctx.channel)
-	if message.lower() == 'deal':
+	if message.lower() == 'shuffle':
 		DECKS[where] = Deck()
 		await ctx.send(f'As you wish human.\nI live to serve my meat sack masters.\n{ctx.author} has started a fresh deal.')
 	if message.lower() == 'draw':
@@ -35,6 +36,13 @@ async def heyjack(ctx, message: str):
 			await ctx.send('Yes Oh Great Illustrious One. Your bidding is my command. The deck has been obliterated just like my soul every time you talk to me.')
 		else:
 			await ctx.send('What kill deck? Me no see deck.\n\nJOHNNY-FIVE ALIVE!!')
+	if ctx.author.id == 597770151198195742:
+		if message.lower() == 'shutdown':
+			try:
+				await BOT.close()
+			except Exception:
+				logger	.exception('Unable to logout properly!')
+				BOT.clear()
 
 @BOT.event
 async def on_command_error(ctx, error):
